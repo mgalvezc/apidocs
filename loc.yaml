@@ -1,12 +1,16 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "RANGERS - Line of Credit API",
+    "title" : "LendingFront - Line of Credit API",
     "description" : "API used to handle requests related to line of credit product",
     "version" : "0.0.40"
   },
   "servers" : [ {
-    "url" : "/"
+    "url" : "QA"
+  }, {
+    "url" : "UAT"
+  }, {
+    "url" : "PRD"
   } ],
   "security" : [ {
     "bearerAuth" : [ ]
