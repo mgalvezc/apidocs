@@ -43,7 +43,7 @@
             "content" : { }
           },
           "401" : {
-            "description" : "User Unauthorized---",
+            "description" : "User Unauthorized",
             "content" : { }
           },
           "500" : {
