@@ -1,0 +1,1767 @@
+openapi: 3.0.1
+info:
+  title: Jonathan Vallejo - Line of Credit API
+  description: API used to handle requests related to line of credit product
+  version: 0.0.40
+servers:
+- url: QA
+- url: UAT
+- url: PRD
+security:
+- bearerAuth: []
+paths:
+  /businesses:
+    post:
+      tags:
+      - Business
+      description: Create business account
+      requestBody:
+        description: Business object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Business'
+        required: true
+      responses:
+        "204":
+          description: Business created succesfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Business'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+  /businesses/{business_id}/owners:
+    post:
+      tags:
+      - Business
+      description: Create owner account
+      parameters:
+      - name: business_id
+        in: path
+        description: Business id
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        description: Owner object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Owner'
+        required: true
+      responses:
+        "204":
+          description: Owner created succesfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Owner'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+  /auth/api-user:
+    post:
+      tags:
+      - Auth
+      description: Get an api admin token. it expires in 1 hour
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth_apiuser_body'
+      responses:
+        "204":
+          description: User token created succesfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserToken'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+  /auth/owner/token:
+    post:
+      tags:
+      - Auth
+      description: Get an owner token. it expires in 24 hours
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/owner_token_body'
+      responses:
+        "204":
+          description: User token created succesfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserToken'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "404":
+          description: Owner doesn't exist
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+  /line-of-credit:
+    post:
+      tags:
+      - Line of Credit
+      description: Create the LOC with all the required variables defined
+      requestBody:
+        description: Line of credit object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/lineofcredit_body'
+        required: true
+      responses:
+        "200":
+          description: Line of Credit created succesfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+      x-codegen-request-body-name: body
+  /line-of-credit/search/ids:
+    post:
+      tags:
+      - Line of Credit
+      description: Retrieve a list of line of credit ids by filters
+      requestBody:
+        description: Filters
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/search_ids_body'
+        required: true
+      responses:
+        "200":
+          description: Line of credit ids
+          content:
+            application/json:
+              schema:
+                type: array
+                example:
+                - "1245312312"
+                - "5412312312"
+                items:
+                  type: string
+        "400":
+          description: Invalid parameters
+        "401":
+          description: Invalid token
+        "500":
+          description: "There was an error on the server, contact support"
+      x-codegen-request-body-name: body
+  /line-of-credit/simulate:
+    post:
+      tags:
+      - Operations
+      summary: ' simulate LOC by passing key LOC parameters.'
+      requestBody:
+        description: Line of credit object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LineOfCreditSimulation'
+        required: true
+      responses:
+        "200":
+          description: Simulation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LineOfCreditSimulation'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+  /line-of-credit/{loc_number}:
+    get:
+      tags:
+      - Line of Credit
+      summary: Get updated information for a LOC
+      parameters:
+      - name: loc_number
+        in: path
+        description: ID of Line of Credit product to return
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Line of credit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+    patch:
+      tags:
+      - Line of Credit
+      summary: Make changes to an existing LOC
+      parameters:
+      - name: loc_number
+        in: path
+        description: ID of Line of Credit product to return
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        description: Updated Line of credit object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/lineofcredit_loc_number_body'
+        required: true
+      responses:
+        "200":
+          description: Updated Line of credit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+      x-codegen-request-body-name: body
+  /line-of-credit/{loc_number}/release:
+    post:
+      tags:
+      - Operations
+      summary: The Approved amount becomes available for the borrower to withdraw.
+      parameters:
+      - name: loc_number
+        in: path
+        description: ID of of Line of Credit product to release
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Line of credit successfully released
+          content: {}
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+  /line-of-credit/{loc_number}/freeze:
+    patch:
+      tags:
+      - Operations
+      summary: Freeze a line of credit product to avoid withdrawals.
+      parameters:
+      - name: loc_number
+        in: path
+        description: ID of of Line of Credit product to freeze
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loc_number_freeze_body'
+      responses:
+        "200":
+          description: Line of credit successfully frozen
+          content: {}
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: Invalid token
+          content: {}
+        "404":
+          description: Line of credit was not found
+          content: {}
+        "409":
+          description: This Line of Credit could not be FROZEN. This Line of Credit
+            is aready FROZEN.
+          content: {}
+        "428":
+          description: This Line of Credit could not be FROZEN. It must be in status
+            RELEASE or ACTIVE to be FROZEN.
+          content: {}
+        "500":
+          description: "There was an error on the server, contact support"
+          content: {}
+  /line-of-credit/{loc_number}/unfreeze:
+    patch:
+      tags:
+      - Operations
+      summary: Unfroze a Line of credit when this is frozen.
+      parameters:
+      - name: loc_number
+        in: path
+        description: ID of of Line of Credit product to unfreeze.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Line of credit successfully unfrozen.
+          content: {}
+        "401":
+          description: Invalid token
+          content: {}
+        "404":
+          description: Line of credit was not found
+          content: {}
+        "409":
+          description: Line Of Credit '356453645' could not be UNFROZEN. It must be
+            marked as FROZEN to be able to UNFREEZE it.
+          content: {}
+        "428":
+          description: Line Of Credit '356453646' could not be UNFROZEN. It must be
+            in status RELEASE or ACTIVE to be UNFROZEN.
+          content: {}
+        "500":
+          description: "There was an error on the server, contact support"
+          content: {}
+  /line-of-credit/{loc_number}/close:
+    patch:
+      tags:
+      - Operations
+      summary: Close a line of credit product when it has 0 balance.
+      parameters:
+      - name: loc_number
+        in: path
+        description: ID of of Line of Credit product to close
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Line of credit successfully closed
+          content: {}
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: Invalid token
+          content: {}
+        "404":
+          description: Line of credit was not found
+          content: {}
+        "409":
+          description: This Line of Credit could not be CLOSED. It must have 0 remaining
+            balance to close.
+          content: {}
+        "500":
+          description: "There was an error on the server, contact support"
+          content: {}
+  /line-of-credit/{loc_number}/withdraw:
+    post:
+      tags:
+      - Operations
+      summary: Enables to create a debit to the lending account  based on a borrower's
+        request to withdraw funds
+      parameters:
+      - name: loc_number
+        in: path
+        description: ID of Line of Credit product to withdraw from
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loc_number_withdraw_body'
+        required: true
+      responses:
+        "200":
+          description: Withdrawal completed succesfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LineOfCreditPaymentAndBalance'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "409":
+          description: This Line of Credit could not be withdrew for the requested
+            amount. The available balance is insufficient.
+        "428":
+          description: This Line of Credit could not be withdrew. The Line of Credit
+            is frozen.
+        "500":
+          description: Internal error
+          content: {}
+      x-codegen-request-body-name: amount
+  /line-of-credit/{loc_number}/payments:
+    get:
+      tags:
+      - Payments
+      summary: Get payments by line of credit product id
+      parameters:
+      - name: loc_number
+        in: path
+        description: ID of Line of Credit product to return
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Array of Line of credit objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LineOfCreditPayment'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+  /line-of-credit/{loc_number}/payments/schedule:
+    get:
+      tags:
+      - Payments
+      summary: Calculate future payments for line of credit product id
+      parameters:
+      - name: loc_number
+        in: path
+        description: ID of Line of Credit product to return
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Array of Line of credit objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LineOfCreditPaymentSchedule'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+  /line-of-credit/payments/{paymentId}/rollback:
+    post:
+      tags:
+      - Payments
+      summary: Mark an existing payment as invalid and update balances accordingly
+      parameters:
+      - name: paymentId
+        in: path
+        description: ID of payment to invalidate
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: payment succesfully canceled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+  /line-of-credit/{loc_number}/voluntary-payments:
+    get:
+      tags:
+      - Voluntary Payments
+      summary: Get voluntary payments by line of credit product id
+      parameters:
+      - name: loc_number
+        in: path
+        description: ID of Line of Credit product to return
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Array of voluntary payment objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LineOfCreditGetVoluntaryPayments'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+    post:
+      tags:
+      - Voluntary Payments
+      summary: Creates voluntary payment to line of credit product
+      parameters:
+      - name: loc_number
+        in: path
+        description: ID of Line of Credit product
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loc_number_voluntarypayments_body'
+        required: true
+      responses:
+        "200":
+          description: Payment and Balance Information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LineOfCreditVoluntaryPayment'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+  /line-of-credit/voluntary-payments/{voluntary_payment_id}/release:
+    post:
+      tags:
+      - Voluntary Payments
+      summary: Release a voluntary payment in pending status
+      parameters:
+      - name: voluntary_payment_id
+        in: path
+        description: ID of payment
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: text
+      responses:
+        "200":
+          description: Voluntary Payment successfully released
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LineOfCreditReleaseVoluntaryPayment'
+        "400":
+          description: A different user must release the One Time Payment
+        "401":
+          description: Invalid token
+        "404":
+          description: Voluntary payment was not found
+        "409":
+          description: A voluntary payment can be released only in PENDING status
+        "500":
+          description: "There was an error on the server, contact support"
+  /line-of-credit/{loc_number}/product-modifications:
+    get:
+      tags:
+      - Product Modification
+      summary: Retrieve all product modifications by loc number
+      parameters:
+      - name: loc_number
+        in: path
+        description: ID of Line of Credit product to return
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Array of Line of credit modifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductModification'
+        "401":
+          description: Missing authorization key
+        "404":
+          description: The Line of credit was not found based on the given line of
+            credit number.
+        "500":
+          description: "There was an error on the server, contact support."
+  /line-of-credit/{loc_number}/withdrawals:
+    get:
+      tags:
+      - Witdrawals
+      summary: Get withdrawals by line of credit product id
+      parameters:
+      - name: loc_number
+        in: path
+        description: ID of Line of Credit product to return
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Array of Withdrawal objects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WithdrawalDetail'
+        "400":
+          description: Invalid parameters
+          content: {}
+        "401":
+          description: User Unauthorized
+          content: {}
+        "403":
+          description: Not authorized access.
+        "404":
+          description: The Line of Credit with  ID number '356453645' was not found.
+          content: {}
+        "500":
+          description: Internal error
+          content: {}
+  /line-of-credit/{loan_id}/webhook/deactivate:
+    patch:
+      tags:
+      - Webhook
+      summary: Deactivates webhook object related to loan_id value.
+      parameters:
+      - name: loan_id
+        in: path
+        description: ID of of Line of Credit product to deactivate webhook.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: Product webhook deactivated.
+          content: {}
+        "400":
+          description: Invalid request
+          content: {}
+        "403":
+          description: Unauthorized access
+          content: {}
+        "404":
+          description: Product not found
+          content: {}
+        "500":
+          description: "There was an error on the server, contact support"
+          content: {}
+  /line-of-credit/{loan_id}/webhook:
+    patch:
+      tags:
+      - Webhook
+      summary: Updates webhook_url object of the loan_id related object.
+      parameters:
+      - name: loan_id
+        in: path
+        description: ID of of Line of Credit product to update webhook.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        description: Webhook object values
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loan_id_webhook_body'
+        required: true
+      responses:
+        "200":
+          description: Product webhook updated.
+          content: {}
+        "400":
+          description: Invalid request
+          content: {}
+        "403":
+          description: Unauthorized access
+          content: {}
+        "404":
+          description: Product not found
+          content: {}
+        "500":
+          description: "There was an error on the server, contact support"
+          content: {}
+components:
+  schemas:
+    LineOfCredit:
+      type: object
+      properties:
+        loc_number:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 77346346
+        interest_rate:
+          type: number
+          example: 0.2
+        credit_limit:
+          type: integer
+          description: maximum amount of credit
+          example: 240000
+        payment_frequency:
+          type: string
+          example: monthly
+          enum:
+          - daily
+          - weekly
+          - monthly
+        payment_day:
+          type: integer
+          description: Payment day (weekly 0-4;monthly 1-30). Required for weekly
+            and monthly frequencies
+          example: 4
+        term:
+          type: integer
+          description: "Term of the product, in months. optional if periodic_payment_amount\
+            \ is sent"
+          example: 48
+        amortization_type:
+          type: string
+          readOnly: true
+          example: variable_payment_amount
+          enum:
+          - fixed_payment_amount
+          - variable_payment_amount
+        total_number_payments:
+          type: integer
+          description: Total number of payments that should be done for the product
+          readOnly: true
+          example: 48
+        nsf_fee:
+          type: number
+          example: 50.98
+        country:
+          type: string
+          description: "three-letter country codes, ISO 3166-1 alpha-3 code"
+          example: USA
+        currency:
+          type: string
+          description: "three-letter currency codes, ISO 4217 code"
+          example: USD
+        business_id:
+          type: integer
+          example: 3453
+        routing_number:
+          type: string
+          description: Bank routing number for the business
+          writeOnly: true
+          example: "1234567891"
+        account_number:
+          type: string
+          description: Bank account number for the business
+          writeOnly: true
+          example: "1234567891"
+        status:
+          type: string
+          readOnly: true
+          example: released
+          enum:
+          - released
+          - created
+          - active
+        periodic_payment_amount:
+          type: number
+          description: Expected payment amount to be paid on each period. Optional
+            if term is sent
+          example: 456.78
+        minimum_periodic_payment_amount:
+          type: number
+          description: Minimum expected  amount to be paid on each period. optional
+            if periodic_payment_amount is sent
+          example: 100
+        fee_balance:
+          type: number
+          readOnly: true
+          example: 945.89
+        principal_balance:
+          type: number
+          readOnly: true
+          example: 5000.33
+        available_amount:
+          type: number
+          readOnly: true
+          example: 35000.78
+        payments_collected:
+          type: number
+          readOnly: true
+          example: 5
+        create_date:
+          type: string
+          description: Datetime the product was created
+          format: date-time
+          readOnly: true
+          example: 2017-07-21T17:32:28Z
+        update_date:
+          type: string
+          description: Datetime the product was updated
+          format: date-time
+          readOnly: true
+          example: 2017-07-21T17:32:28Z
+        release_date:
+          type: string
+          description: Datetime the product was released
+          format: date-time
+          readOnly: true
+          example: 2017-07-21T17:32:28Z
+        fund_date:
+          type: string
+          description: Datetime the product was funded
+          format: date-time
+          readOnly: true
+          example: 2017-07-21T17:32:28Z
+        funding_entity:
+          type: string
+          description: Funding entity value for example (BOFL or BFS or BFSW)
+          example: BFS
+          enum:
+          - BOFL
+          - BFS
+          - BFSW
+        maturity_date:
+          type: string
+          format: date-time
+          readOnly: true
+          example: 2017-07-21T17:32:28Z
+        collection_entity:
+          type: string
+          description: Collection entity value for example(AXOS or BFS or BFSI or
+            BFSW)
+          example: AXOS
+        is_frozen:
+          type: boolean
+          description: Defines the if the line of credit is frozen
+          readOnly: true
+          example: false
+        loan_id:
+          type: integer
+          description: LOC database identifier
+          readOnly: true
+          example: 78947
+        last_withdrawal:
+          type: number
+          readOnly: true
+          example: 13121.78
+        current_balance_of_fees_owed:
+          type: number
+          readOnly: true
+          example: 100.0
+        total_amount_paid_back:
+          type: number
+          readOnly: true
+          example: 6000.0
+        principal_balance_due:
+          type: number
+          readOnly: true
+          example: 10000.0
+        interest_balance_due:
+          type: number
+          readOnly: true
+          example: 200.0
+        principal_paid:
+          type: number
+          readOnly: true
+          example: 8000.0
+        interest_paid:
+          type: number
+          readOnly: true
+          example: 80.0
+        application_number:
+          type: string
+          description: Application number
+          example: "89898989898989"
+        webhook_secret_key:
+          type: string
+          description: secret key of webhook url object
+          example: xcbhdssh439745592344
+        webhook_expiration_date:
+          type: string
+          description: Webkook expiration date
+          example: 2021-07-21
+        status_01:
+          type: boolean
+          description: status_01 value
+          example: true
+        status_02:
+          type: boolean
+          description: status_02 value
+          example: false
+        status_03:
+          type: boolean
+          description: status_03 value
+          example: false
+        status_04:
+          type: boolean
+          description: status_04 value
+          example: false
+        status_05:
+          type: boolean
+          description: status_05 value
+          example: false
+        status_06:
+          type: boolean
+          description: status_06 value
+          example: false
+        is_crystalized:
+          type: boolean
+          description: Defines the if the line of credit is crystalized
+          readOnly: true
+          example: false
+    LineOfCreditSimulation:
+      required:
+      - credit_limit
+      - interest_rate
+      - payment_day
+      - payment_frequency
+      - periodic_payment_amount
+      - term
+      - total_number_of_payments
+      - withdrawal_amount
+      type: object
+      properties:
+        interest_rate:
+          type: number
+          example: 0.2
+        credit_limit:
+          type: integer
+          description: maximum amount of credit
+          example: 240000
+        payment_frequency:
+          type: string
+          example: monthly
+          enum:
+          - daily
+          - weekly
+          - monthly
+        payment_day:
+          type: integer
+          description: Payment day (weekly 0-4;monthly 1-30). Required for weekly
+            and monthly frequencies
+          example: 4
+        term:
+          type: integer
+          description: "Term of the product, in months. Optional if periodic_payment_amount\
+            \ is sent"
+          example: 48
+        amortization_type:
+          type: string
+          readOnly: true
+          example: variable_payment_amount
+          enum:
+          - fixed_payment_amount
+          - variable_payment_amount
+        total_number_of_payments:
+          type: integer
+          description: Total number of payments that should be done for the product.
+            Optional if term is sent
+          example: 48
+        number_of_payments:
+          type: integer
+          description: Number of payments done so far
+          readOnly: true
+          example: 48
+        nsf_fee:
+          type: number
+          example: 50.98
+        country:
+          type: string
+          description: "three-letter country codes, ISO 3166-1 alpha-3 code"
+          example: USA
+        currency:
+          type: string
+          description: "three-letter currency codes, ISO 4217 code"
+          example: USD
+        periodic_payment_amount:
+          type: number
+          description: Expected payment amount to be paid on each period. Optional
+            if term is sent
+          example: 456.78
+        withdrawal_amount:
+          type: number
+          description: Amount to withdraw
+          writeOnly: true
+          example: 5000.0
+        payments:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/LineOfCreditSimulation_payments'
+    LineOfCreditPaymentAndBalance:
+      type: object
+      properties:
+        periodic_payment_amount:
+          type: number
+          description: Expected payment amount to be paid on each period
+          example: 456.78
+        minimum_periodic_payment_amount:
+          type: number
+          example: 456.78
+        fee_balance:
+          type: number
+          example: 945.89
+        interest_balance:
+          type: number
+          example: 1245.56
+        principal_balance:
+          type: number
+          example: 5000.33
+        available_amount:
+          type: number
+          example: 35000.78
+    LineOfCreditVoluntaryPayment:
+      type: object
+      properties:
+        fee_balance:
+          type: number
+          example: 945.89
+        principal_balance:
+          type: number
+          example: 5000.33
+        available_amount:
+          type: number
+          example: 35000.78
+        status:
+          type: string
+          example: CLEARED
+        id:
+          type: integer
+          description: Id of the OneTimePayment
+          example: 2020
+    LineOfCreditGetVoluntaryPayments:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status of payment
+          readOnly: true
+          example: PROCESSED
+        amount:
+          type: number
+          description: amount of payment
+          readOnly: true
+          example: 945.89
+        create_date:
+          type: string
+          description: Date of creation for one time payment
+          readOnly: true
+          example: 2021-01-01
+        name:
+          type: string
+          description: Name of payment
+          readOnly: true
+          example: ONE-TIME PAYMENT
+        transaction_type:
+          type: string
+          description: Transaction type
+          readOnly: true
+          example: REGULAR_PAYMENT
+        id:
+          type: integer
+          description: ID of object
+          readOnly: true
+          example: 41
+        payment_id:
+          type: integer
+          description: Payment id related to one time payment
+          readOnly: true
+          example: 12
+        credit_debit_ind:
+          type: string
+          description: indicate of debt or credit
+          readOnly: true
+          example: DEBIT
+        bank_name:
+          type: string
+          description: Bank name of payment
+          readOnly: true
+          example: BFS Capital
+        settlement_date:
+          type: string
+          description: Date of settlement date of payment
+          readOnly: true
+          example: 2021-08-09
+    LineOfCreditReleaseVoluntaryPayment:
+      type: object
+      properties:
+        fee_balance:
+          type: number
+          example: 945.89
+        principal_balance:
+          type: number
+          example: 5000.33
+        available_amount:
+          type: number
+          example: 35000.78
+        id:
+          type: number
+          example: 889
+        status:
+          type: string
+          example: CLEARED
+    LineOfCreditPayment:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Payment Id
+          example: "1243434"
+        create_date:
+          type: string
+          description: Datetime the payment was created
+          format: date-time
+          example: 2017-07-21T17:32:28Z
+        clear_date:
+          type: string
+          description: Datetime the payment was created
+          format: date-time
+          example: 2017-07-21T17:32:28Z
+        payment_type:
+          type: string
+          example: PAYMENT REFUND
+        payment_method:
+          type: string
+          example: ACH
+        reason:
+          type: string
+          example: Account closed
+        principal:
+          type: number
+          example: 34534
+        original_payment_id:
+          type: integer
+          example: 353
+        loan_balance:
+          type: number
+          example: 545.85
+        interest:
+          type: number
+          example: 6445.29
+        fee_amount:
+          type: number
+          example: 3245.52
+        amount:
+          type: number
+          example: 5245.89
+        payment_amount:
+          type: number
+          example: 4545.89
+        interest_amount:
+          type: number
+          example: 1455.56
+        principal_amount:
+          type: number
+          example: 6000.33
+        otp_type:
+          type: string
+          description: one time payment type
+          example: Voluntary payment
+        return_code:
+          type: string
+          description: Code of the reason
+          example: R02
+        status:
+          type: string
+          example: cleared
+          enum:
+          - CLEARED
+          - PENDING
+          - CANCELLED
+        bank_name:
+          type: string
+          description: Bank name of payment
+          example: BFS Capital
+    LineOfCreditPaymentSchedule:
+      type: object
+      properties:
+        create_date:
+          type: string
+          description: Datetime the payment was created
+          format: date-time
+          example: 2017-07-21T17:32:28Z
+        clear_date:
+          type: string
+          description: Datetime the payment was created
+          format: date-time
+          example: 2017-07-21T17:32:28Z
+        payment_amount:
+          type: number
+          example: 6245.89
+        interest_amount:
+          type: number
+          example: 1245.56
+        principal_amount:
+          type: number
+          example: 5000.33
+    ProductModification:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status of the product modification
+          example: APPLIED
+        loc_number:
+          type: string
+          description: Line of credit number
+          example: "1234000000"
+        create_date:
+          type: string
+          description: Create date of the product modification
+          example: 2020-06-04T14:32:16Z
+        released_date:
+          type: string
+          description: Release date of the product modification
+          example: 2020-06-04T14:32:16Z
+        expiration_date:
+          type: string
+          description: Expiration date of the product modification
+          example: 2020-06-04T14:32:16Z
+        cancellation_date:
+          type: string
+          description: Cancellation date of the product modification
+          example: 2020-06-04T14:32:16Z
+        start_date:
+          type: string
+          description: Start date of the product modification
+          example: 2020-06-04T14:32:16Z
+        new_total_number_payments:
+          type: number
+          description: New total number of payments
+          example: 18
+        current_total_number_payments:
+          type: number
+          description: Current total number of payments
+          example: 12
+        new_amount:
+          type: number
+          description: New amount
+          example: 35000
+        current_amount:
+          type: number
+          description: Current amount
+          example: 10000
+        new_payment_frequency:
+          type: string
+          description: New payment frequency
+          example: WEEKLY
+        current_payment_frequency:
+          type: string
+          description: Current payment frequency
+          example: MONTHLY
+        new_payment_day:
+          type: string
+          description: New payment day
+          example: Thursday
+        current_payment_day:
+          type: string
+          description: Current payment day
+          example: "30"
+        new_annual_interest_rate:
+          type: number
+          description: New annual interest rate
+          example: 10.0
+        current_annual_interest_rate:
+          type: number
+          description: Current annual interest rate
+          example: 15.0
+        new_auto_accrue_nsf_fee_amount:
+          type: number
+          description: New nsf fee amount
+          example: 10.0
+        current_auto_accrue_nsf_fee_amount:
+          type: number
+          description: Current nsf fee amount
+          example: 15.0
+        new_credit_limit:
+          type: number
+          description: New credit limit
+          example: 10.0
+        current_credit_limit:
+          type: number
+          description: Current credit limit
+          example: 15.0
+        modification_type:
+          type: string
+          description: Current modification type
+          example: PAYMENT_HOLIDAY
+    Business:
+      required:
+      - dba
+      - name
+      - tax_id
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          example: "77346346"
+        tax_id:
+          type: string
+          example: "900000198"
+        name:
+          type: string
+          writeOnly: true
+          example: My business
+        legal_name:
+          type: string
+          readOnly: true
+          example: My business
+        dba:
+          type: string
+          example: My business dba
+      description: Business model
+    Owner:
+      required:
+      - email
+      - first_name
+      - last_name
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: Peter
+        last_name:
+          type: string
+          example: Drucker
+        email:
+          type: string
+          example: peter.drucker@gmail.com
+        business_id:
+          type: integer
+          description: id of the business the owner belogs to
+          readOnly: true
+          example: 3454
+        user_id:
+          type: integer
+          description: "id of the user, this id is needed when generating a token\
+            \ on behalf of the owner"
+          readOnly: true
+          example: 124
+        id:
+          type: integer
+          description: id of the owner
+          readOnly: true
+          example: 7734
+      description: owner model
+    UserToken:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT token
+          example: eyJhbGciOiJIUzI1NiIsImV4cCI6MTU3ODU5NDcwOSwiaWF0IjoxNTc4NTA4MzA5fQ.eyJmaXJzdF9uYW1lIjoiQVBJIiwidXNlcl9pZCI6MTg1NSwiZXhwaXJhdGlvbl9kYXRlIjoiMTIvMDQvNDc1NyIsImNsaWVudF9pZCI6MjMsImNoYW5nZV9wYXNzd29yZF9mbGFnIjp0cnVlLCJlbWFpbCI6ImFwaS1iZnNAbGVuZGluZ2Zyb250LmNvbSJ9.7-_jQMd2seCH5p1yjQK0QqfaiGituzHtaSZRuzq7yOU
+      description: Token of API  User
+    WithdrawalDetail:
+      type: object
+      properties:
+        create_date:
+          type: string
+          description: Create date of the LOC
+          readOnly: true
+          example: 2020-06-04T14:32:16Z
+        status:
+          type: string
+          description: Status of withdrawals
+          readOnly: true
+          example: PENDING
+        amount:
+          type: number
+          description: Amount to
+          example: 456.78
+        payment_frequency:
+          type: string
+          description: Current payment frequency
+          readOnly: true
+          example: MONTHLY
+        payment_day:
+          type: string
+          description: Payment day
+          readOnly: true
+          example: Thursday
+        payment_amount:
+          type: number
+          description: Amount of withdrawals
+          readOnly: true
+          example: 456.78
+        number_payments:
+          type: number
+          description: Number of payments
+          readOnly: true
+          example: 12
+        annual_interest_rate:
+          type: number
+          description: Annual interest rate
+          readOnly: true
+          example: 15.0
+        funding_create_date:
+          type: string
+          description: Create date of the payment
+          readOnly: true
+          example: 2020-06-04T14:32:16Z
+      description: Withdrawals
+    auth_apiuser_body:
+      required:
+      - password
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username
+          example: my_username
+        password:
+          type: string
+          description: Password
+          example: my_password
+    owner_token_body:
+      required:
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+          description: owner email
+          example: owner@email.com
+    lineofcredit_body:
+      required:
+      - account_number
+      - business_id
+      - credit_limit
+      - interest_rate
+      - minimum_periodic_payment_amount
+      - nsf_fee
+      - payment_day
+      - payment_frequency
+      - periodic_payment_amount
+      - routing_number
+      - term
+      allOf:
+      - $ref: '#/components/schemas/LineOfCredit'
+      - properties:
+          legal_holder:
+            type: string
+            description: Legal holder value for example(AXOS or BFS or BOOS or BFSI
+              or BFSW)
+            example: AXOS
+            enum:
+            - AXOS
+            - BFS
+            - BOOS
+            - BFSI
+            - BFSW
+    inline_response_200:
+      allOf:
+      - $ref: '#/components/schemas/LineOfCredit'
+      - properties:
+          collection_entity:
+            type: string
+            description: Collection entity value for example(US_BANK or FIFTH_THIRD_BANK)
+            example: US_BANK
+            enum:
+            - US_BANK
+            - FIFTH_THIRD_BANK
+    search_ids_body:
+      properties:
+        start_date_created:
+          type: string
+          description: Start date filter for Line of Credit create
+          example: 2021-12-15
+        end_date_created:
+          type: string
+          description: End date filter for Line of Credit create
+          example: 2021-12-16
+        start_date_updated:
+          type: string
+          description: Start date filter for Line of Credit update
+          example: 2021-12-15
+        end_date_updated:
+          type: string
+          description: End date filter for Line of Credit update
+          example: 2021-12-16
+        status:
+          type: string
+          description: Status filter for Line of Credit
+          example: ACTIVE
+          enum:
+          - ACTIVE
+          - BOARDED
+          - CLOSED
+          - FUNDED
+          - ON_HOLD
+          - PAST_DUE
+          - REJECTED
+          - RELEASED
+          - WRITE_OFF
+          - DECLINED
+          - RETURNED
+    lineofcredit_loc_number_body:
+      allOf:
+      - $ref: '#/components/schemas/LineOfCredit'
+      - properties:
+          legal_holder:
+            type: string
+            description: Legal holder value for example(AXOS or BFS or BOOS or BFSI
+              or BFSW)
+            example: AXOS
+            enum:
+            - AXOS
+            - BFS
+            - BOOS
+            - BFSI
+            - BFSW
+          apply_modifications:
+            type: boolean
+            description: Apply pending product modifications with LOC Update API
+            example: false
+    loc_number_freeze_body:
+      required:
+      - reason
+      properties:
+        reason:
+          type: integer
+          description: Line of Credit freeze Reason id
+          example: 470
+        additional_details:
+          type: string
+          description: Line of Credit freeze Reason
+          example: Payment problems
+    loc_number_withdraw_body:
+      required:
+      - amount
+      - periodic_payment_amount
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: Amount to withdraw
+          example: 5000
+        payment_frequency:
+          type: string
+          example: monthly
+          enum:
+          - daily
+          - weekly
+          - monthly
+        payment_day:
+          type: integer
+          description: Payment day (weekly 0-4;monthly 1-30). Required for weekly
+            and monthly frequencies
+          example: 4
+        periodic_payment_amount:
+          type: number
+          description: Expected payment amount to be paid on each period
+          example: 456.78
+    inline_response_200_1:
+      type: object
+      properties:
+        fee_balance:
+          type: number
+          example: 945.89
+        interest_balance:
+          type: number
+          example: 1245.56
+        principal_balance:
+          type: number
+          example: 5000.33
+        available_amount:
+          type: number
+          example: 35000.78
+    loc_number_voluntarypayments_body:
+      required:
+      - amount
+      - payment_method
+      type: object
+      properties:
+        amount:
+          type: integer
+          description: Payment Amount
+          example: 5000
+        payment_method:
+          type: string
+          description: "Defines the way the payment is going to be collected (ACH,\
+            \ WIRE or CHECK)"
+          example: ACH
+          enum:
+          - ACH
+          - WIRE
+          - CHECK
+        settlement_date:
+          type: string
+          description: "Defines the settlement_date of payment_method (CASH, WIRE,\
+            \ CHECK, etc)"
+          example: 2021-08-04
+        client_bank_account_id:
+          type: string
+          description: "Defines the id of bank_name selected (BFS Capital, etc)"
+          example: "38"
+    loan_id_webhook_body:
+      properties:
+        webhook_url:
+          type: string
+          description: URL Value for webhook url object
+          example: https://webhook_url.com
+        webhook_secret_key:
+          type: string
+          description: secret key of webhook url object
+          example: xcbhdssh439745592344
+        webhook_expiration_date:
+          type: string
+          description: Webkook expiration date
+          example: 2021-07-21
+    LineOfCreditSimulation_payments:
+      properties:
+        create_date:
+          type: string
+          description: Datetime the payment was created
+          format: date-time
+          example: 2017-07-21T17:32:28Z
+        clear_date:
+          type: string
+          description: Datetime the payment was created
+          format: date-time
+          example: 2017-07-21T17:32:28Z
+        payment_amount:
+          type: number
+          example: 4545.89
+        interest_amount:
+          type: number
+          example: 1455.56
+        principal_amount:
+          type: number
+          example: 6000.33
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
