@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: LendingFront - Line of Credit API
+  title: Jonathan - Line of Credit API
   description: API used to handle requests related to line of credit product
   version: 0.0.40
 servers:
